@@ -9,19 +9,15 @@
         <div id="background"></div>
         <div id="character"></div>
         <div id="seat"></div>
-        <div id="dialog-box">
-            <p id="message"></p>
+        <div id="dialog-container">
+            <div id="dialog-box">
+                <p id="message"></p>
+            </div>
         </div>
-    </div>
-
-    <div id="controls">
-        <button id="start-btn">Start Game</button>
-        <button id="end-btn">End Game</button>
-        <input type="text" id="achievement-input" placeholder="Enter achievement">
-        <button id="achieve-btn">Trigger Achievement</button>
-        <br>
-        <input type="text" id="ai-message-input" placeholder="Say something to the girl">
-        <button id="ai-message-btn">Send</button>
+        <div id="input-container">
+            <input type="text" id="ai-message-input" placeholder="Say something to the girl...">
+            <button id="ai-message-btn">Send</button>
+        </div>
     </div>
 
     <div id="achievements">
@@ -30,40 +26,6 @@
     </div>
 
     <script>
-        document.getElementById('start-btn').addEventListener('click', () => {
-            fetch('/start', { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('message').innerText = data.status;
-                    document.getElementById('character').style.opacity = 1;
-                });
-        });
-
-        document.getElementById('end-btn').addEventListener('click', () => {
-            fetch('/end', { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('message').innerText = data.status;
-                    document.getElementById('character').style.opacity = 0;
-                });
-        });
-
-        document.getElementById('achieve-btn').addEventListener('click', () => {
-            const achievement = document.getElementById('achievement-input').value;
-            fetch(`/achieve/${achievement}`, { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('message').innerText = data.status;
-                    const achievementList = document.getElementById('achievement-list');
-                    achievementList.innerHTML = '';
-                    data.achievements.forEach(ach => {
-                        const li = document.createElement('li');
-                        li.innerText = ach;
-                        achievementList.appendChild(li);
-                    });
-                });
-        });
-
         document.getElementById('ai-message-btn').addEventListener('click', () => {
             const message = document.getElementById('ai-message-input').value;
             fetch('/ask', {
@@ -75,7 +37,11 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('message').innerText = data.response;
+                const dialogBox = document.getElementById('dialog-box');
+                const newMessage = document.createElement('p');
+                newMessage.innerText = data.response;
+                dialogBox.appendChild(newMessage);
+                dialogBox.scrollTop = dialogBox.scrollHeight;
                 const audio = new Audio(data.audio);
                 audio.play();
             });
