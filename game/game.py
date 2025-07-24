@@ -1,6 +1,6 @@
 import os
 from gtts import gTTS
-from game.ai import AI
+from .ai import AI
 
 class Game:
     def __init__(self):
